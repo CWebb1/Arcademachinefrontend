@@ -1,6 +1,13 @@
 <script>
+
 let exe1Path = '';
 let exe2Path = '';
+
+function getFileName(path) {
+	if (!path) return '';
+	// Windows and Unix path support
+	return path.split(/[/\\]/).pop();
+}
 
 async function chooseExe1() {
 	exe1Path = await window.electronAPI.chooseExe();
@@ -18,15 +25,16 @@ function openExe2() {
 </script>
 
 <main>
-	<h2>EXE 1</h2>
-	<button on:click={chooseExe1}>Choose EXE 1</button>
-	<span>{exe1Path ? exe1Path : 'No file chosen'}</span>
-	<button on:click={openExe1} disabled={!exe1Path}>Open EXE 1</button>
-	
-	<h2>EXE 2</h2>
-	<button on:click={chooseExe2}>Choose EXE 2</button>
-	<span>{exe2Path ? exe2Path : 'No file chosen'}</span>
-	<button on:click={openExe2} disabled={!exe2Path}>Open EXE 2</button>
+
+   <h2>{exe1Path ? getFileName(exe1Path) : 'No file chosen'}</h2>
+   <button on:click={chooseExe1}>Choose EXE 1</button>
+   <span>{exe1Path ? exe1Path : 'No file chosen'}</span>
+   <button on:click={openExe1} disabled={!exe1Path}>Open {exe1Path ? getFileName(exe1Path) : 'EXE 1'}</button>
+
+   <h2>{exe2Path ? getFileName(exe2Path) : 'No file chosen'}</h2>
+   <button on:click={chooseExe2}>Choose EXE 2</button>
+   <span>{exe2Path ? exe2Path : 'No file chosen'}</span>
+   <button on:click={openExe2} disabled={!exe2Path}>Open {exe2Path ? getFileName(exe2Path) : 'EXE 2'}</button>
 	
 </main>
 
