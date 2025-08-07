@@ -2,7 +2,7 @@
   "name": "electron-app-svelte",
   "version": "1.0.0",
   "description": "Arcade Machine Frontend Application",
-  "author": "CWebb1",
+  "author": "Sudio three BIT @ Otago Polytechnic",
   "main": "index.js",
   "scripts": {
     "build": "rollup -c",
