@@ -21,7 +21,11 @@ app.on("ready", () => {
     }
   });
   mainWindow.loadFile(path.join(__dirname, "public/index.html"));
-  mainWindow.webContents.openDevTools();
+  
+  // Only open DevTools in development mode
+  if (process.env.NODE_ENV === 'development') {
+    mainWindow.webContents.openDevTools();
+  }
 });
 
 const { execFile } = require('child_process');
