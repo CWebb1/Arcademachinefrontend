@@ -1,3 +1,5 @@
+// This file is the main entry point for the Electron application.
+// It initializes the Electron app, creates the main window, and sets up IPC communication.
 const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const path = require("path");
 
