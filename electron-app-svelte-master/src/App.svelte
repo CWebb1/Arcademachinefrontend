@@ -1,82 +1,122 @@
 <script>
+	import { onMount, onDestroy } from 'svelte';
+	import ArcadeHeader from './components/ArcadeHeader.svelte';
+	import GameCarousel from './components/GameCarousel.svelte';
+	import LoadingState from './components/LoadingState.svelte';
 
-let exe1Path = '';
-let exe2Path = '';
+	let games = [];
+	let currentGameIndex = 0;
+	let isLoading = true;
 
-function getFileName(path) {
-	if (!path) return '';
-	// Windows and Unix path support
-	return path.split(/[/\\]/).pop();
-}
+	onMount(async () => {
+		await loadGames();
+		setupGamesWatcher();
+	});
 
-async function chooseExe1() {
-	exe1Path = await window.electronAPI.chooseExe();
-}
-async function chooseExe2() {
-	exe2Path = await window.electronAPI.chooseExe();
-}
+	onDestroy(() => {
+		// Clean up the listener when component is destroyed
+		if (window.electronAPI?.removeGamesUpdatedListener) {
+			window.electronAPI.removeGamesUpdatedListener();
+		}
+	});
 
-function openExe1() {
-	if (exe1Path) window.electronAPI.openExePath(exe1Path);
-}
-function openExe2() {
-	if (exe2Path) window.electronAPI.openExePath(exe2Path);
-}
+	async function loadGames() {
+		try {
+			games = await window.electronAPI.getGamesFromFolder();
+			isLoading = false;
+		} catch (error) {
+			console.error('Failed to load games:', error);
+			isLoading = false;
+		}
+	}
+
+	function setupGamesWatcher() {
+		// Listen for games folder changes
+		window.electronAPI.onGamesUpdated((event, updatedGames) => {
+			console.log('Games updated:', updatedGames);
+			const previousGameCount = games.length;
+			games = updatedGames;
+			
+			// Adjust current index if games were removed
+			if (currentGameIndex >= games.length && games.length > 0) {
+				currentGameIndex = games.length - 1;
+			} else if (games.length === 0) {
+				currentGameIndex = 0;
+			}
+			
+			// Show notification if games were added/removed
+			if (previousGameCount !== games.length) {
+				const action = games.length > previousGameCount ? 'added' : 'removed';
+				console.log(`Game ${action}! Total games: ${games.length}`);
+			}
+		});
+	}
+
+	function handleGameChanged(event) {
+		currentGameIndex = event.detail;
+	}
+
+	function handleLaunchGame(event) {
+		const gameData = event.detail;
+		if (gameData && gameData.exePath) {
+			window.electronAPI.openExePath(gameData.exePath);
+		}
+	}
+
+	// Handle keyboard controls
+	function handleKeydown(event) {
+		if (games.length === 0) return;
+		
+		switch(event.key) {
+			case 'ArrowLeft':
+				currentGameIndex = currentGameIndex === 0 ? games.length - 1 : currentGameIndex - 1;
+				break;
+			case 'ArrowRight':
+				currentGameIndex = (currentGameIndex + 1) % games.length;
+				break;
+			case 'Enter':
+			case ' ':
+				if (games[currentGameIndex]) {
+					window.electronAPI.openExePath(games[currentGameIndex].exePath);
+				}
+				break;
+		}
+	}
 </script>
 
-<main>
+<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+<div class="app-container" on:keydown={handleKeydown} tabindex="0" role="application" aria-label="Arcade Game Launcher">
+	<main>
 
-   <h2>{exe1Path ? getFileName(exe1Path) : 'No file chosen'}</h2>
-   <button on:click={chooseExe1}>Choose EXE 1</button>
-   <span>{exe1Path ? exe1Path : 'No file chosen'}</span>
-   <button on:click={openExe1} disabled={!exe1Path}>Open {exe1Path ? getFileName(exe1Path) : 'EXE 1'}</button>
-
-   <h2>{exe2Path ? getFileName(exe2Path) : 'No file chosen'}</h2>
-   <button on:click={chooseExe2}>Choose EXE 2</button>
-   <span>{exe2Path ? exe2Path : 'No file chosen'}</span>
-   <button on:click={openExe2} disabled={!exe2Path}>Open {exe2Path ? getFileName(exe2Path) : 'EXE 2'}</button>
-	
-</main>
+		<LoadingState {isLoading} hasGames={games.length > 0} />
+		
+		{#if !isLoading && games.length > 0}
+			<ArcadeHeader />
+			
+			<GameCarousel 
+				{games} 
+				{currentGameIndex}
+				on:gameChanged={handleGameChanged}
+				on:launchGame={handleLaunchGame}
+			/>
+		{/if}
+	</main>
+</div>
 
 <style>
-main {
-	text-align: center;
-	padding: 1em;
-	max-width: 400px;
-	margin: 0 auto;
-}
-
-h2 {
-	color: #ff3e00;
-	text-transform: uppercase;
-	font-size: 2em;
-	font-weight: 100;
-	margin: 1em 0 0.5em 0;
-}
-
-button {
-	margin: 0.5em;
-	padding: 0.5em 1em;
-	font-size: 1em;
-	cursor: pointer;
-}
-
-button:disabled {
-	opacity: 0.5;
-	cursor: not-allowed;
-}
-
-span {
-	display: block;
-	margin: 0.5em;
-	font-size: 0.9em;
-	color: #666;
-	word-break: break-all;
-}
-
-@media (min-width: 640px) {
-	main {
-		max-width: none;
+	.app-container {
+		background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+		color: #fff;
+		min-height: 100vh;
+		padding: 2em;
+		font-family: 'Courier New', monospace;
+		outline: none;
+		overflow: hidden;
 	}
-}
+
+	main {
+		width: 100%;
+		height: 100%;
+	}
 </style>
