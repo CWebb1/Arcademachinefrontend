@@ -1,4 +1,3 @@
-
 <script>
   export let game;
   export let isActive = false;
@@ -12,10 +11,10 @@
 <button 
   class="game-card {isActive ? 'active' : ''}"
   on:click
+  aria-label={`Launch ${game.name}`}
 >
-  <img src={imgPath} alt={game.name} />
+  <img src={imgPath} alt={`Image of ${game.name}`} />
   <h3>{game.name}</h3>
-
 </button>
 
 <style>
@@ -51,7 +50,7 @@
     width: 150px;
     height: 150px;
     object-fit: cover;
-    border-radius: 5px;
+    border-radius: 10px; /* Increased for better aesthetics */
     margin-bottom: 10px;
   }
 
@@ -59,4 +58,5 @@
     margin: 0;
     font-size: 1.2rem;
   }
+</style>
 </style>
