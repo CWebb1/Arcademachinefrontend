@@ -1,8 +1,8 @@
 <script>
   export let game;
   export let isActive = false;
-  export let index;
 
+  // Determine the image path based on the game object
   $: imgPath = game && game.image
     ? 'file:///' + game.image.replace(/\\/g, '/')
     : 'images/default-game.svg';
@@ -11,19 +11,12 @@
 <button 
   class="game-card {isActive ? 'active' : ''}"
   on:click
-  aria-label={`Launch ${game.name}`}
->
+  aria-label={`Launch ${game.name}`}>
   <img src={imgPath} alt={`Image of ${game.name}`} />
   <h3>{game.name}</h3>
 </button>
 
 <style>
-    .img-path {
-    font-size: 0.7rem;
-    color: #ff6b35;
-    word-break: break-all;
-    margin-top: 0.5em;
-  }
   .game-card {
     min-width: 200px;
     text-align: center;
@@ -58,5 +51,4 @@
     margin: 0;
     font-size: 1.2rem;
   }
-</style>
 </style>

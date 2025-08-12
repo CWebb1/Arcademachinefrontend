@@ -23,14 +23,18 @@
 <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 <div class="app-container" tabindex="0">
 	<main>
+		<h1>Arcade</h1>
 		{#if isLoading}
-			<div class="loading">Loading games...</div>
-		{:else if games.length > 0}
-			<h1>Game Arcade</h1>
-			<SimpleCarousel {games} />
-		{:else}
-			<div class="no-games">No games found</div>
+			<div class="loading">Loading...</div>
 		{/if}
+
+		{#if !isLoading && games.length === 0}
+			<div class="no-games">No games found. Please add games to the folder.</div>
+		{/if}
+
+	
+			<SimpleCarousel {games} />
+
 	</main>
 </div>
 

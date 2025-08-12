@@ -54,6 +54,7 @@ app.on('web-contents-created', (event, contents) => {
   });
 });
 
+
 // IPC Handlers for game management
 ipcMain.handle('get-games-from-folder', async () => {
   try {
@@ -114,6 +115,7 @@ ipcMain.handle('get-games-from-folder', async () => {
   }
 });
 
+// Handle opening game files
 ipcMain.handle('open-exe-path', async (event, gamePath) => {
   try {
     console.log('Opening game:', gamePath);
@@ -133,6 +135,8 @@ ipcMain.handle('open-exe-path', async (event, gamePath) => {
   }
 });
 
+
+// Handle choosing an executable file
 ipcMain.handle('choose-exe', async () => {
   try {
     const result = await dialog.showOpenDialog({

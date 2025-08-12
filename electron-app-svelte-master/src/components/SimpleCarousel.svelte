@@ -1,7 +1,6 @@
 <script>
   import { onMount } from 'svelte';
   import GameCard from './GameCard.svelte';
-  import NavigationButton from './NavigationButton.svelte';
   import CarouselControls from './CarouselControls.svelte';
   
   export let games = [];
@@ -11,15 +10,14 @@
   // Handle keyboard navigation
   onMount(() => {
     const handleKeydown = (e) => {
-      if (e.key === 'ArrowLeft') {
+      if (e.key === 'ArrowLeft' || e.key === 'a') {
         goToPrev();
-      } else if (e.key === 'ArrowRight') {
+      } else if (e.key === 'ArrowRight' || e.key === 'd') {
         goToNext();
-      } else if (e.key === 'Enter') {
+      } else if (e.key === 'Enter' || e.key === ' ') {
         launchGame();
       }
     };
-    
     window.addEventListener('keydown', handleKeydown);
     
     return () => {
@@ -44,10 +42,9 @@
   }
 </script>
 
-<div class="carousel">
-  <NavigationButton direction="prev" onClick={goToPrev} />
-  
-  <div class="games-container">
+<!-- TODO: add nav buttons left,right -->
+<section class="carousel">
+  <section class="games-container">
     {#each games as game, index}
       <GameCard
         {game}
@@ -56,10 +53,8 @@
         on:click={() => activeIndex = index}
       />
     {/each}
-  </div>
-  
-  <NavigationButton direction="next" onClick={goToNext} />
-</div>
+  </section>
+</section>
 
 <CarouselControls 
   {activeIndex} 

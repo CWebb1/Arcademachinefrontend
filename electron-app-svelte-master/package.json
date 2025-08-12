@@ -1,7 +1,7 @@
 {
   "name": "test-arcade",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "main": "electron/main.cjs",
   "homepage": "./",
@@ -24,7 +24,7 @@
       "node_modules/**/*"
     ],
     "win": {
-      "target": "nsis",
+      "target": "portable",
       "icon": "public/favicon.ico"
     },
     "mac": {
