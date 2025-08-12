@@ -32,3 +32,20 @@ Retro Arcade Collection is an Electron-based application built with Svelte and V
    npm run electron
    ```
 
+
+## build exe Instructions
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd electron-app-svelte-master
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. build app:
+   ```bash
+   npm run electron-pack
+   ```
